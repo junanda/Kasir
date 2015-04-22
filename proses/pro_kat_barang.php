@@ -1,7 +1,7 @@
 <?php
 	require_once'../koneksi.inc.php';
 	
-	$p=$_POST['proses'];
+	$p=$_REQUEST['proses'];
 	
 	switch($p){
 		case"inputkategori":
@@ -26,6 +26,73 @@
 			$ins->bindParam(1,$_POST['cate']);
 			$ins->bindParam(2,$_POST['sub-cat']);
 			$hasil=$ins->execute();
+			if($hasil){
+				echo"<script>
+					location.href='../beranda.php?p=kategori';
+				</script>";
+			}else{
+				echo"<script>
+					alert('error');
+					location.href='../beranda.php?p=kategori';
+				</script>";
+			}
+		break;
+		case"updatekategori":
+			$updkt="update tb_kelompok_barang set nama_kelompok_barang=? where kode_kelompok_barang=?";
+			$ubah=$db->prepare($updkt);
+			$ubah->bindParam(1,$_POST['cat']);
+			$ubah->bindParam(2,$_POST['kode_kel_ba']);
+			$hasil=$ubah->execute();
+			if($hasil){
+				echo"<script>
+					location.href='../beranda.php?p=kategori';
+				</script>";
+			}else{
+				echo"<script>
+					alert('error');
+					location.href='../beranda.php?p=kategori';
+				</script>";
+			}
+		break;
+		case"updatesubkategori":
+			$upsql="update tb_satuan_barang set kode_kelompok_barang=?, nama_satuan_barang=? where kode_satuan_barang=?";
+			$uppro=$db->prepare($upsql);
+			$uppro->bindParam(1,$_POST['cate']);
+			$uppro->bindParam(2,$_POST['sub-cat']);
+			$uppro->bindParam(3,$_POST['kode_sat_ba']);
+			$hasil=$uppro->execute();
+			if($hasil){
+				echo"<script>
+					location.href='../beranda.php?p=kategori';
+				</script>";
+			}else{
+				echo"<script>
+					alert('error');
+					location.href='../beranda.php?p=kategori';
+				</script>";
+			}
+		break;
+		case"delkel":
+			$sqlkel="delete from tb_kelompok_barang where kode_kelompok_barang=?";
+			$delkerja=$db->prepare($sqlkel);
+			$delkerja->bindParam(1,$_GET['id']);
+			$hasil=$delkerja->execute();
+			if($hasil){
+				echo"<script>
+					location.href='../beranda.php?p=kategori';
+				</script>";
+			}else{
+				echo"<script>
+					alert('error');
+					location.href='../beranda.php?p=kategori';
+				</script>";
+			}
+		break;
+		case"delsub":
+			$sqldel="delete from tb_satuan_barang where kode_satuan_barang=?";
+			$delpro=$db->prepare($sqldel);
+			$delpro->bindParam(1,$_GET['id']);
+			$hasil=$delpro->execute();
 			if($hasil){
 				echo"<script>
 					location.href='../beranda.php?p=kategori';

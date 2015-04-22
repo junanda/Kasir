@@ -30,10 +30,6 @@ $().ready(function(){
 			
 			$("#tb_barang").load("proses/tb_barang.php","q=tampilData");
 		}
-		$("#tamsup").click(function(){
-			$("#tamsup").attr("disabled",true);
-			$("#editsup").attr("disabled",false);
-		});
 		
 		//load tabel
 		$("#tb_barang").load("proses/tb_barang.php","q=tampilData");
@@ -76,4 +72,26 @@ $().ready(function(){
 			return false;
 		});
 		//end barang
+		//supplier
+		/*$("#tamsup").click(function(){
+			$("#tamsup").attr("disabled",true);
+			$("#editsup").attr("disabled",false);
+		});*/
+		$("#formSupplier").submit(function(){
+			$.ajax({
+				type: 'POST',
+				url: 'proses/pro_supplier.php',
+				data: $(this).serialize(),
+				success: function(a){
+					if(a=='sukses'){
+						alert(a);
+						exit();
+					}else{
+						alert('Error');
+						exit();
+					}
+				}
+			});
+			return false;
+		});
 });

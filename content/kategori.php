@@ -6,6 +6,32 @@
 	$prosubkat='inputsubkategori';
 	$dis1='';
 	$dis2='';
+	$kdkel='';
+	$nmkel='';
+	
+	if(isset($_GET['q']) &&	$_GET['q']=='editingkel'){
+		$pro="Update";
+		$prokat="updatekategori";
+		$dis2="disabled";
+		
+		$u="select kode_kelompok_barang,nama_kelompok_barang from tb_kelompok_barang where kode_kelompok_barang=?";
+		$pros=$db->prepare($u);
+		$pros->bindParam(1,$_GET['id']);
+		$pros->execute();
+		$nilai=$pros->fetch(PDO::FETCH_OBJ);
+	}else if(isset($_GET['q']) and $_GET['q']=='editingsub'){
+		$pro2="Ubah";
+		$prosubkat="updatesubkategori";
+		$dis1="disabled";
+		
+		$us="select a.kode_satuan_barang, a.nama_satuan_barang, a.kode_kelompok_barang, b.nama_kelompok_barang from tb_satuan_barang a inner join tb_kelompok_barang b where a.kode_kelompok_barang=b.kode_kelompok_barang and kode_satuan_barang=?";
+		$prous=$db->prepare($us);
+		$prous->bindParam(1,$_GET['id']);
+		$prous->execute();
+		$subbar=$prous->fetch(PDO::FETCH_OBJ);
+	}
+	
+	
 	function hitj($id){
 		$dai=new PDO('mysql:host=localhost;dbname=kasir','root','triadpass');
 		$sqli="select count(kode_satuan_barang) from tb_satuan_barang where kode_kelompok_barang='".$id."'";
@@ -22,7 +48,7 @@
 		echo"<tr>";
 		echo"<td ".$row.">".$no."</td>";
 		echo"<td colspan='2'>".$cetak->nama_kelompok_barang."</td>";
-		echo"<td><a href=''>Edit</a> - <a href=''>Delete</a></td>";
+		echo"<td><a href='?p=kategori&q=editingkel&id=".$cetak->kode_kelompok_barang."'>Edit</a> - <a href='proses/pro_kat_barang.php?proses=delkel&id=".$cetak->kode_kelompok_barang."'>Delete</a></td>";
 		echo"</tr>";
 		
 		  $li="select kode_satuan_barang,nama_satuan_barang from tb_satuan_barang where kode_kelompok_barang=?";
@@ -35,7 +61,7 @@
 				echo"<tr>";
 				echo"<td width='5%'>".$no.".".$a."</td>";
 				echo"<td>".$satuan->nama_satuan_barang."</td>";
-				echo"<td><a href=''>Edit</a> - <a href=''>Delete</a></td>";
+				echo"<td><a href='?p=kategori&q=editingsub&id=".$satuan->kode_satuan_barang."'>Edit</a> - <a href='proses/pro_kat_barang.php?proses=delsub&id=".$satuan->kode_satuan_barang."'>Delete</a></td>";
 				echo"</tr>";
 				$a++;
 			}
@@ -63,9 +89,10 @@
 				</div>
 				<form role='form' action='proses/pro_kat_barang.php' method='POST'>
 					<div class='box-body'>
+						<input type='hidden' name='kode_kel_ba' value='<?php echo (isset($nilai->kode_kelompok_barang)? $nilai->kode_kelompok_barang:"");?>' />
 						<div class='form-group'>
 							<label>Nama Kategory</label>
-							<input type='text' id="cat" class='form-control' name='cat' placeholder='Enter Name Category' required />
+							<input type='text' id="cat" class='form-control' name='cat' placeholder='Enter Name Category' value='<?php echo (isset($nilai->nama_kelompok_barang)? $nilai->nama_kelompok_barang:"");?>' required />
 						</div>
 					</div>
 					<div class='box-footer'>
@@ -81,6 +108,7 @@
 				</div>
 				<form role='form' action='proses/pro_kat_barang.php' method='POST'>
 					<div class='box-body'>
+						<input type='hidden' name='kode_sat_ba' value='<?php echo (isset($subbar->kode_satuan_barang)? $subbar->kode_satuan_barang:"");?>' />
 						<div class='form-group'>
 							<label>Kategory</label>
 							<select class='form-control' name='cate' id='cate'>
@@ -88,7 +116,7 @@
 									$subk="select kode_kelompok_barang, nama_kelompok_barang from tb_kelompok_barang";
 									$tam=$db->prepare($subk);
 									$tam->execute();
-									echo"<option>Pilih Kategori barang</option>";
+									echo"<option value='".(isset($subbar->kode_kelompok_barang)?$subbar->kode_kelompok_barang:"")."'>".(isset($subbar->nama_kelompok_barang)?$subbar->nama_kelompok_barang:"Pilih Kategori Barang")."</option>";
 									while($sub=$tam->fetch(PDO::FETCH_OBJ)){
 										echo"<option value='".$sub->kode_kelompok_barang."'>".$sub->nama_kelompok_barang."</option>";
 									}
@@ -97,11 +125,11 @@
 						</div>
 						<div class='form-group'>
 							<label>Nama Sub-Kategori</label>
-							<input type='text' name='sub-cat' id='sub-cat' class='form-control' placeholder='Enter Name Sub Category' required />
+							<input type='text' name='sub-cat' id='sub-cat' class='form-control' placeholder='Enter Name Sub Category' required value='<?php echo (isset($subbar->nama_satuan_barang) ? $subbar->nama_satuan_barang:"");?>'/>
 						</div>
 					</div>
 					<div class='box-footer'>
-						<button class='btn btn-primary' type='submit' name='proses' value='<?=$prosubkat?>' <?php echo $dis1;?> ><?=$pro2?></button>
+						<button class='btn btn-primary' type='submit' name='proses' value='<?=$prosubkat?>' <?php echo $dis2;?> ><?=$pro2?></button>
 					</div>
 				</form>
 			</div>
